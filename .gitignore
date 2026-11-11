@@ -1,0 +1,29 @@
+# Secrets: never commit real credentials
+.env
+.env.*
+!.env.example
+/auth.json
+
+# Dependencies / build output
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+
+# Laravel runtime
+/storage/*.key
+/storage/pail
+.phpunit.result.cache
+/.phpunit.cache
+
+# Tooling / OS
+*.log
+.DS_Store
+Thumbs.db
+.phpactor.json
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed

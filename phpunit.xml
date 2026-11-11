@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="LOG_CHANNEL" value="null"/>
+        <env name="CACHE_STORE" value="array"/>
+        <env name="LEADERBOARD_CACHE_TTL" value="300"/>
+        <env name="REFERSION_BASE_URL" value="https://api.refersion.test/v2026-08"/>
+        <env name="REFERSION_TOKEN_URL" value="https://auth.refersion.test/oauth/token"/>
+        <env name="REFERSION_CLIENT_ID" value="test-client-id"/>
+        <env name="REFERSION_CLIENT_SECRET" value="test-client-secret"/>
+        <env name="REFERSION_BATCH_SIZE" value="5"/>
+        <env name="REFERSION_PAGE_LIMIT" value="100"/>
+        <env name="REFERSION_MAX_PAGES" value="1000"/>
+        <env name="SESSION_DRIVER" value="array"/>
+    </php>
+</phpunit>
