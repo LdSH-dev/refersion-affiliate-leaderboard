@@ -1,0 +1,57 @@
+x-php: &php
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile
+    args:
+      UID: ${HOST_UID:-1000}
+      GID: ${HOST_GID:-1000}
+  image: refersion-leaderboard-php:local
+  volumes:
+    - .:/var/www/html
+
+# Ports are published on 127.0.0.1 only: the app runs with APP_DEBUG=true and exposes
+# ?fresh=1, neither of which should be reachable from the local network.
+services:
+  app:
+    <<: *php
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    environment:
+      PHP_CLI_SERVER_WORKERS: 4
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - mock
+    # Laravel's built-in /up route; lets `make up` (--wait) return only once the app answers.
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/up') === false ? 1 : 0);"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  # Local stand-in for the Refersion API (docker/mock-refersion/router.php).
+  mock:
+    <<: *php
+    command: php -S 0.0.0.0:8080 docker/mock-refersion/router.php
+    environment:
+      PHP_CLI_SERVER_WORKERS: 4
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@fsockopen('127.0.0.1', 8080) ? 0 : 1);"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  node:
+    image: node:22-bookworm-slim
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    working_dir: /app
+    command: npm run dev
+    environment:
+      npm_config_cache: /tmp/.npm
+    volumes:
+      - .:/app
+    ports:
+      - "127.0.0.1:5173:5173"
+    profiles:
+      - dev
